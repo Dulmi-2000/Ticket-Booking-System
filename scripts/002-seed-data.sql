@@ -1,0 +1,19 @@
+-- Seed Events Data
+
+INSERT INTO events (id, title, description, venue, location, date, time, price_cents, total_tickets, available_tickets, image_url, category, is_featured) VALUES
+('evt-001', 'Summer Music Festival 2026', 'Join us for the biggest music festival of the summer featuring top artists from around the world. Three days of non-stop music, food, and fun!', 'Central Park Arena', 'New York, NY', '2026-07-15', '14:00', 15000, 5000, 4850, '/images/events/summer-festival.jpg', 'Music', TRUE),
+('evt-002', 'Tech Innovation Summit', 'The premier technology conference bringing together industry leaders, innovators, and developers. Keynotes, workshops, and networking opportunities.', 'Convention Center', 'San Francisco, CA', '2026-05-20', '09:00', 29900, 2000, 1750, '/images/events/tech-summit.jpg', 'Technology', TRUE),
+('evt-003', 'Broadway Night: Hamilton', 'Experience the Tony Award-winning musical that has taken the world by storm. A revolutionary story told through revolutionary music.', 'Richard Rodgers Theatre', 'New York, NY', '2026-04-25', '19:30', 19500, 1300, 800, '/images/events/hamilton.jpg', 'Theater', TRUE),
+('evt-004', 'NBA Finals Game 5', 'Witness history in the making as the top two teams battle for the championship. Premium seating available.', 'Madison Square Garden', 'New York, NY', '2026-06-18', '20:00', 35000, 20000, 5000, '/images/events/nba-finals.jpg', 'Sports', TRUE),
+('evt-005', 'Modern Art Exhibition', 'Explore contemporary masterpieces from acclaimed artists around the globe. Interactive installations and guided tours available.', 'Metropolitan Museum of Art', 'New York, NY', '2026-04-10', '10:00', 4500, 500, 450, '/images/events/art-exhibition.jpg', 'Art', FALSE),
+('evt-006', 'Comedy Night Live', 'Laugh out loud with the hottest comedians in the industry. Stand-up performances that will leave you in stitches.', 'The Comedy Store', 'Los Angeles, CA', '2026-04-18', '21:00', 7500, 300, 275, '/images/events/comedy-night.jpg', 'Comedy', FALSE),
+('evt-007', 'Wine & Jazz Evening', 'An elegant evening of fine wines paired with smooth jazz performances. Sommelier-led tastings included.', 'Napa Valley Vineyard', 'Napa, CA', '2026-05-08', '18:00', 12500, 200, 180, '/images/events/wine-jazz.jpg', 'Music', FALSE),
+('evt-008', 'Startup Pitch Competition', 'Watch innovative startups compete for funding. Network with investors and entrepreneurs shaping the future.', 'WeWork HQ', 'Austin, TX', '2026-05-15', '13:00', 5000, 400, 350, '/images/events/startup-pitch.jpg', 'Technology', FALSE),
+('evt-009', 'Classical Symphony Orchestra', 'Experience Beethoven and Mozart performed by the world-renowned Philharmonic Orchestra. An evening of musical excellence.', 'Carnegie Hall', 'New York, NY', '2026-04-30', '19:00', 8500, 2800, 2400, '/images/events/symphony.jpg', 'Music', TRUE),
+('evt-010', 'Food & Wine Festival', 'Taste dishes from celebrity chefs and discover new wines from premier vineyards. Cooking demonstrations and VIP experiences.', 'Navy Pier', 'Chicago, IL', '2026-06-05', '11:00', 9500, 3000, 2800, '/images/events/food-festival.jpg', 'Food & Drink', TRUE),
+('evt-011', 'Yoga Retreat Weekend', 'Rejuvenate your mind and body with expert-led yoga sessions, meditation, and wellness workshops in a serene setting.', 'Sedona Retreat Center', 'Sedona, AZ', '2026-05-22', '08:00', 22500, 100, 85, '/images/events/yoga-retreat.jpg', 'Wellness', FALSE),
+('evt-012', 'Indie Film Festival', 'Discover the next generation of filmmaking talent. Screenings, Q&As with directors, and industry panels.', 'Angelika Film Center', 'Dallas, TX', '2026-04-12', '12:00', 6000, 600, 500, '/images/events/film-festival.jpg', 'Film', FALSE);
+
+-- Create admin user (password: admin123)
+INSERT INTO users (id, email, name, password_hash, role) VALUES
+('usr-admin-001', 'admin@eventtickets.com', 'Admin User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4hwJE.vL.PQQGHGi', 'admin');
