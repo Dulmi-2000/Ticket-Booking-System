@@ -11,10 +11,11 @@ import confetti from "canvas-confetti"
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get("session_id")
+  const bookingId = searchParams.get("bookingId")
   const [hasTriggeredConfetti, setHasTriggeredConfetti] = useState(false)
 
   useEffect(() => {
-    if (!hasTriggeredConfetti && sessionId) {
+    if (!hasTriggeredConfetti && (sessionId || bookingId)) {
       setHasTriggeredConfetti(true)
       confetti({
         particleCount: 100,
@@ -22,7 +23,7 @@ export default function BookingSuccessPage() {
         origin: { y: 0.6 },
       })
     }
-  }, [sessionId, hasTriggeredConfetti])
+  }, [sessionId, bookingId, hasTriggeredConfetti])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4 py-8">

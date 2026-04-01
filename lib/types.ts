@@ -61,4 +61,5 @@ export interface AuthSession {
     name: string
     role: UserRole
   }
+  token: string
 }

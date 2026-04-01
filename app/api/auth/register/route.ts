@@ -20,8 +20,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const user = await createUser(email, password, name)
-    const token = await createToken(user.id, user.email, user.role)
+    const { backendToken, ...user } = await createUser(email, password, name)
+    
+    // Prioritize the token from the backend
+    const token = backendToken || await createToken(user.id, user.email, user.role)
     await setAuthCookie(token)
 
     return NextResponse.json({

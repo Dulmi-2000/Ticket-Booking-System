@@ -31,45 +31,18 @@ export async function POST(request: NextRequest) {
     const totalPriceCents = event.price_cents * quantity
 
     // Create booking via backend
-    const booking = await createBooking({
-      userId: session.user.id,
-      eventId,
-      quantity,
-      totalPriceCents,
-      status: "pending",
-    })
-
-    // Create Stripe Checkout Session
-    const origin = request.headers.get("origin") || "http://localhost:3000"
-
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: event.title,
-              description: `${quantity} ticket(s) for ${event.title} on ${new Date(event.date).toLocaleDateString()}`,
-            },
-            unit_amount: event.price_cents,
-          },
-          quantity,
-        },
-      ],
-      metadata: {
-        bookingId: booking.id,
-        eventId,
+    const booking = await createBooking(
+      {
         userId: session.user.id,
-        quantity: String(quantity),
+        eventId: eventId.toString(),
+        quantity,
+        totalPriceCents,
       },
-      success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/events/${eventId}?cancelled=true`,
-    })
+      session.token
+    )
 
     return NextResponse.json({
-      clientSecret: checkoutSession.client_secret,
+      clientSecret: "mock_secret_" + Math.random().toString(36).substring(7),
       bookingId: booking.id,
     })
   } catch (error) {
@@ -78,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
     console.error("Checkout error:", error)
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: (error as Error).message || "Failed to create checkout session" },
       { status: 500 }
     )
   }

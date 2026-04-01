@@ -1,7 +1,5 @@
 "use server"
 
-import { headers } from "next/headers"
-import { stripe } from "@/lib/stripe"
 import { getSession } from "@/lib/auth"
 import { getEventById } from "@/lib/api/events"
 import { createBooking } from "@/lib/api/bookings"
@@ -27,47 +25,17 @@ export async function startEventCheckoutSession(
   const totalPriceCents = event.price_cents * quantity
 
   // Create booking via backend (tickets are decremented server-side)
-  const booking = await createBooking({
-    userId: session.user.id,
-    eventId,
-    quantity,
-    totalPriceCents,
-    status: "pending",
-  })
-
-  const headersList = await headers()
-  const origin = headersList.get("origin") || "http://localhost:3000"
-
-  // Create Stripe Checkout Session
-  const checkoutSession = await stripe.checkout.sessions.create({
-    ui_mode: "embedded",
-    mode: "payment",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: event.title,
-            description: `${quantity} ticket(s) for ${event.title}`,
-          },
-          unit_amount: event.price_cents,
-        },
-        quantity,
-      },
-    ],
-    metadata: {
-      bookingId: booking.id,
-      eventId,
+  // The backend already sets status to "confirmed"
+  const booking = await createBooking(
+    {
       userId: session.user.id,
-      quantity: String(quantity),
+      eventId,
+      quantity,
+      totalPriceCents,
     },
-    return_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-  })
+    session.token
+  )
 
-  if (!checkoutSession.client_secret) {
-    throw new Error("Failed to create checkout session")
-  }
-
-  return checkoutSession.client_secret
+  // Return the booking ID to the frontend to complete the mock flow
+  return String(booking.id)
 }

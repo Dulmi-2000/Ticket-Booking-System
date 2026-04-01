@@ -2,8 +2,10 @@ import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 import type { JWTPayload, AuthSession, UserRole } from "./types"
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback-secret-change-in-production"
+// Decode the Base64 secret to match the backend's encoding
+const JWT_SECRET = Uint8Array.from(
+  atob(process.env.JWT_SECRET || "Ym9va2luZy1zeXN0ZW0tc2VjcmV0LWtleS0xMjM0NTY3ODkwMTIzNDU2"),
+  (c) => c.charCodeAt(0)
 )
 
 const COOKIE_NAME = "auth_token"
@@ -16,6 +18,7 @@ export async function createToken(
 ): Promise<string> {
   const token = await new SignJWT({ userId, email, role })
     .setProtectedHeader({ alg: "HS256" })
+    .setSubject(email)
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(JWT_SECRET)
@@ -25,7 +28,14 @@ export async function createToken(
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET)
-    return payload as unknown as JWTPayload
+    const jwtPayload = payload as any
+    return {
+      userId: String(jwtPayload.userId),
+      email: jwtPayload.email || jwtPayload.sub,
+      role: jwtPayload.role,
+      exp: jwtPayload.exp,
+      iat: jwtPayload.iat,
+    } as JWTPayload
   } catch {
     return null
   }
@@ -61,8 +71,9 @@ export async function getSession(): Promise<AuthSession | null> {
       id: payload.userId,
       email: payload.email,
       name: payload.email.split("@")[0],
-      role: payload.role,
+      role: (payload.role?.toLowerCase() as UserRole) || "user",
     },
+    token,
   }
 }
 
