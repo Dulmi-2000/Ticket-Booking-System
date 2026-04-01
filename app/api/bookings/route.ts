@@ -5,7 +5,7 @@ import { requireAuth } from "@/lib/auth"
 export async function GET() {
   try {
     const session = await requireAuth()
-    const bookings = await getBookingsByUserId(session.user.id)
+    const bookings = await getBookingsByUserId(session.user.id, session.token)
 
     return NextResponse.json({ bookings })
   } catch (error) {
