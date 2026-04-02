@@ -1,62 +1,61 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useAuth } from "@/lib/auth-context"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import {useAuth} from "@/lib/auth-context";
+import {Button} from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Ticket,
-  User,
-  LogOut,
-  Calendar,
-  Settings,
-  Menu,
-  X,
-} from "lucide-react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import {Ticket, User, LogOut, Calendar, Settings, Menu, X} from "lucide-react";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export function Header() {
-  const { session, isLoading, refresh } = useAuth()
-  const router = useRouter()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const {session, isLoading, refresh} = useAuth();
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" })
-    await refresh()
-    router.push("/")
-  }
+    await fetch("/api/auth/logout", {method: "POST"});
+    await refresh();
+    router.push("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl shadow-sm supports-[backdrop-filter]:bg-background/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Ticket className="h-7 w-7 text-primary" />
-          <span className="text-xl font-bold text-primary font-heading tracking-tight">BookMySeat</span>
+          <span className="text-xl font-bold text-primary font-heading tracking-tight">
+            BookMySeat
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
-          <Link href="/events?category=Concerts" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link
+            href="/events?category=Concerts"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             Concerts
           </Link>
-          <Link href="/events?category=Theatre" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link
+            href="/events?category=Theatre"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             Theatre
           </Link>
-          <Link href="/events?category=Family" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link
+            href="/events?category=Family"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             Family & Other
           </Link>
           {session?.user.role === "admin" && (
             <Link
               href="/admin"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Admin Dashboard
             </Link>
           )}
@@ -92,8 +91,7 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="flex items-center gap-2 text-destructive focus:text-destructive"
-                >
+                  className="flex items-center gap-2 text-destructive focus:text-destructive">
                   <LogOut className="h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
@@ -101,11 +99,11 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              {/* <Button variant="ghost" size="sm" asChild>
                 <Link href="/login">Sign In</Link>
-              </Button>
+              </Button> */}
               <Button size="sm" asChild>
-                <Link href="/register">Sign Up</Link>
+                <Link href="/login">Login</Link>
               </Button>
             </>
           )}
@@ -115,8 +113,7 @@ export function Header() {
         <button
           className="md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
+          aria-label="Toggle menu">
           {mobileMenuOpen ? (
             <X className="h-6 w-6 text-foreground" />
           ) : (
@@ -132,30 +129,26 @@ export function Header() {
             <Link
               href="/events?category=Concerts"
               className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
+              onClick={() => setMobileMenuOpen(false)}>
               Concerts
             </Link>
             <Link
               href="/events?category=Theatre"
               className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
+              onClick={() => setMobileMenuOpen(false)}>
               Theatre
             </Link>
             <Link
               href="/events?category=Family"
               className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
+              onClick={() => setMobileMenuOpen(false)}>
               Family & Other
             </Link>
             {session && (
               <Link
                 href="/dashboard"
                 className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+                onClick={() => setMobileMenuOpen(false)}>
                 My Bookings
               </Link>
             )}
@@ -163,8 +156,7 @@ export function Header() {
               <Link
                 href="/admin"
                 className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+                onClick={() => setMobileMenuOpen(false)}>
                 Admin Dashboard
               </Link>
             )}
@@ -173,27 +165,20 @@ export function Header() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    handleLogout()
-                    setMobileMenuOpen(false)
-                  }}
-                >
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}>
                   Sign Out
                 </Button>
               ) : (
                 <>
                   <Button variant="outline" asChild>
-                    <Link
-                      href="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Sign In
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                      Login
                     </Link>
                   </Button>
                   <Button asChild>
-                    <Link
-                      href="/register"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
+                    <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
                       Sign Up
                     </Link>
                   </Button>
@@ -204,5 +189,5 @@ export function Header() {
         </div>
       )}
     </header>
-  )
+  );
 }

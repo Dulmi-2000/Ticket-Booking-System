@@ -150,16 +150,19 @@ export async function getAllBookings(token?: string): Promise<BookingWithEvent[]
   return data.bookings.map(mapBookingWithEvent)
 }
 
-export async function getBookingsCount(): Promise<number> {
-  return 0
+export async function getBookingsCount(token?: string): Promise<number> {
+  const data = await backendGet<any>("/api/bookings/stats", token)
+  return data.totalBookings || 0
 }
 
-export async function getConfirmedBookingsCount(): Promise<number> {
-  return 0
+export async function getConfirmedBookingsCount(token?: string): Promise<number> {
+  const data = await backendGet<any>("/api/bookings/stats", token)
+  return data.confirmedBookings || 0
 }
 
-export async function getTotalRevenue(): Promise<number> {
-  return 0
+export async function getTotalRevenue(token?: string): Promise<number> {
+  const data = await backendGet<any>("/api/bookings/stats", token)
+  return data.totalRevenue || 0
 }
 
 export async function getRecentBookings(

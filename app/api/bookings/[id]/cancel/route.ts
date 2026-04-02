@@ -15,7 +15,7 @@ export async function POST(
     const session = await requireAuth()
     const { id } = await params
 
-    const booking = await getBookingById(id)
+    const booking = await getBookingById(id, session.token)
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 })
     }
@@ -51,7 +51,7 @@ export async function POST(
     }
 
     // Cancel via backend API
-    await updateBookingStatus(id, "cancelled")
+    await updateBookingStatus(id, "cancelled", session.token)
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -11,7 +11,7 @@ import { getAllUsers } from "@/lib/api/users"
 
 export async function GET() {
   try {
-    await requireAdmin()
+    const { token } = await requireAdmin()
 
     const [
       totalEvents,
@@ -22,13 +22,13 @@ export async function GET() {
       recentBookings,
       users,
     ] = await Promise.all([
-      getEventsCount(),
-      getUpcomingEventsCount(),
-      getBookingsCount(),
-      getConfirmedBookingsCount(),
-      getTotalRevenue(),
-      getRecentBookings(10),
-      getAllUsers(),
+      getEventsCount(token),
+      getUpcomingEventsCount(token),
+      getBookingsCount(token),
+      getConfirmedBookingsCount(token),
+      getTotalRevenue(token),
+      getRecentBookings(10, token),
+      getAllUsers(token),
     ])
 
     return NextResponse.json({

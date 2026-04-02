@@ -70,19 +70,25 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         location,
         date,
         time,
-        price_cents: priceInCents,
-        total_tickets: parseInt(totalTickets, 10),
-        image_url: imageUrl,
+        priceCents: priceInCents,
+        totalTickets: parseInt(totalTickets, 10),
+        imageUrl,
         category,
-        is_featured: isFeatured,
+        isFeatured,
       }
 
       const url = isEditing ? `/api/events/${event?.id}` : "/api/events"
-      const method = isEditing ? "PATCH" : "POST"
+      const method = isEditing ? "PUT" : "POST"
+
+      const { session } = await (await fetch("/api/auth/session")).json()
+      const token = session?.token
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { "Authorization": `Bearer ${token}` })
+        },
         body: JSON.stringify(payload),
       })
 

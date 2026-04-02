@@ -4,9 +4,9 @@ import { getAllBookings } from "@/lib/api/bookings"
 
 export async function GET() {
   try {
-    await requireAdmin()
+    const { token } = await requireAdmin()
 
-    const bookings = await getAllBookings()
+    const bookings = await getAllBookings(token)
 
     return NextResponse.json({ bookings })
   } catch (error) {

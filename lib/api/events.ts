@@ -44,6 +44,11 @@ export async function getAllEvents(): Promise<Event[]> {
   return data.events.map(mapEvent)
 }
 
+export async function getAllEventsAdmin(token?: string): Promise<Event[]> {
+  const data = await backendGet<{ events: BackendEvent[] }>("/api/events/admin", token)
+  return data.events.map(mapEvent)
+}
+
 export async function getFeaturedEvents(): Promise<Event[]> {
   const data = await backendGet<{ events: BackendEvent[] }>("/api/events/featured")
   return data.events.map(mapEvent)
@@ -139,12 +144,12 @@ export async function incrementAvailableTickets(
   // This is handled server-side during booking cancellation
 }
 
-export async function getEventsCount(): Promise<number> {
-  const events = await getAllEvents()
-  return events.length
+export async function getEventsCount(token?: string): Promise<number> {
+  const data = await backendGet<any>("/api/events/stats", token)
+  return data.totalEvents || 0
 }
 
-export async function getUpcomingEventsCount(): Promise<number> {
-  const events = await getAllEvents()
-  return events.length
+export async function getUpcomingEventsCount(token?: string): Promise<number> {
+  const data = await backendGet<any>("/api/events/stats", token)
+  return data.upcomingEvents || 0
 }

@@ -1,22 +1,24 @@
-import { backendPost } from "./client"
+import { backendGet, backendPost } from "./client"
 import type { User, UserRole } from "../types"
 
 interface BackendAuthResponse {
-  token: string
+  token?: string
   userId: number
+  id?: number
   fullName: string
   email: string
   role: string
 }
 
 function mapUser(res: BackendAuthResponse): User {
+  const userId = res.userId || res.id
   const now = new Date()
   return {
-    id: String(res.userId),
+    id: String(userId),
     email: res.email,
     name: res.fullName,
     password_hash: "",
-    role: res.role === "ADMIN" ? "admin" : "user",
+    role: res.role.toLowerCase() as UserRole,
     created_at: now,
     updated_at: now,
   }
@@ -42,7 +44,7 @@ export async function createUser(
     email,
     password,
   })
-  return { ...mapUser(res), backendToken: res.token }
+  return { ...mapUser(res), backendToken: res.token || "" }
 }
 
 export async function loginUser(
@@ -53,7 +55,7 @@ export async function loginUser(
     email,
     password,
   })
-  return { user: mapUser(res), backendToken: res.token }
+  return { user: mapUser(res), backendToken: res.token || "" }
 }
 
 export async function verifyPassword(
@@ -64,8 +66,9 @@ export async function verifyPassword(
   return false
 }
 
-export async function getAllUsers(): Promise<User[]> {
-  return []
+export async function getAllUsers(token?: string): Promise<User[]> {
+  const data = await backendGet<BackendAuthResponse[]>("/api/users", token)
+  return data.map(mapUser)
 }
 
 export async function updateUserRole(

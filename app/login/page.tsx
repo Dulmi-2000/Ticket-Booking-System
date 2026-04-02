@@ -36,12 +36,18 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to sign in");
+        throw new Error(data.error || "Failed to login");
       }
 
       await refresh();
       toast.success("Welcome back!");
-      router.push(redirectTo);
+
+      const user = data.user;
+      if (user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push(redirectTo);
+      }
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -58,7 +64,7 @@ export default function LoginPage() {
             <span className="text-2xl font-bold text-foreground">EventTix</span>
           </Link>
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardDescription>Login to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -98,7 +104,7 @@ export default function LoginPage() {
               </Field>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Logging..." : "Login"}
               </Button>
             </FieldGroup>
           </form>
@@ -111,12 +117,6 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
-
-          <div className="mt-4 rounded-lg bg-muted/50 p-3 text-center text-xs text-muted-foreground">
-            <p className="font-medium">Demo Admin Account</p>
-            <p>Email: admin@eventtickets.com</p>
-            <p>Password: admin123</p>
-          </div>
         </CardContent>
       </Card>
     </div>

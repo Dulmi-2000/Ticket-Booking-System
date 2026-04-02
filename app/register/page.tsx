@@ -1,66 +1,66 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useAuth } from "@/lib/auth-context"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Ticket, Eye, EyeOff } from "lucide-react"
-import { toast } from "sonner"
+import {useState} from "react";
+import Link from "next/link";
+import {useRouter, useSearchParams} from "next/navigation";
+import {useAuth} from "@/lib/auth-context";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
+import {Ticket, Eye, EyeOff} from "lucide-react";
+import {toast} from "sonner";
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { refresh } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const {refresh} = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const redirectTo = searchParams.get("redirect") || "/"
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match")
-      return
+      toast.error("Passwords do not match");
+      return;
     }
 
     if (password.length < 8) {
-      toast.error("Password must be at least 8 characters")
-      return
+      toast.error("Password must be at least 8 characters");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      })
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name, email, password}),
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to create account")
+        throw new Error(data.error || "Failed to create account");
       }
 
-      await refresh()
-      toast.success("Account created successfully!")
-      router.push(redirectTo)
+      await refresh();
+      toast.success("Account created successfully!");
+      router.push(redirectTo);
     } catch (error) {
-      toast.error((error as Error).message)
+      toast.error((error as Error).message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4 py-8">
@@ -71,9 +71,7 @@ export default function RegisterPage() {
             <span className="text-2xl font-bold text-foreground">EventTix</span>
           </Link>
           <CardTitle className="text-2xl">Create an Account</CardTitle>
-          <CardDescription>
-            Join EventTix to book your next experience
-          </CardDescription>
+          <CardDescription>Join EventTix to book your next experience</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -85,7 +83,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="John Doe"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   required
                   autoComplete="name"
                 />
@@ -98,7 +96,7 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   autoComplete="email"
                 />
@@ -112,7 +110,7 @@ export default function RegisterPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="At least 8 characters"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                     required
                     autoComplete="new-password"
                     minLength={8}
@@ -120,27 +118,20 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirmPassword">
-                  Confirm Password
-                </FieldLabel>
+                <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   required
                   autoComplete="new-password"
                 />
@@ -156,13 +147,12 @@ export default function RegisterPage() {
             Already have an account?{" "}
             <Link
               href={`/login${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
-              className="font-medium text-primary hover:underline"
-            >
-              Sign in
+              className="font-medium text-primary hover:underline">
+              Login
             </Link>
           </p>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

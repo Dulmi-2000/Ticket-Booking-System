@@ -45,7 +45,15 @@ export default function AdminEventsPage() {
 
     setIsDeleting(true)
     try {
-      const res = await fetch(`/api/events/${deleteId}`, { method: "DELETE" })
+      const { session } = await (await fetch("/api/auth/session")).json()
+      const token = session?.token
+
+      const res = await fetch(`/api/events/${deleteId}`, { 
+        method: "DELETE",
+        headers: {
+          ...(token && { "Authorization": `Bearer ${token}` })
+        }
+      })
       if (!res.ok) throw new Error("Failed to delete event")
 
       toast.success("Event deleted successfully")

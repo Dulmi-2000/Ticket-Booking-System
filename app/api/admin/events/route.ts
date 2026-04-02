@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth"
-import { getAllEvents } from "@/lib/api/events"
+import { getAllEventsAdmin } from "@/lib/api/events"
 
 export async function GET() {
   try {
-    await requireAdmin()
-    const events = await getAllEvents()
+    const { token } = await requireAdmin()
+    const events = await getAllEventsAdmin(token)
     return NextResponse.json({ events })
   } catch (error) {
     if ((error as Error).message === "Unauthorized") {
