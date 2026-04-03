@@ -1,58 +1,38 @@
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth"
-import {
-  getEventsCount,
-  getUpcomingEventsCount,
-  getAllEventsAdmin,
-} from "@/lib/api/events"
-import {
-  getBookingsCount,
-  getConfirmedBookingsCount,
-  getTotalRevenue,
-} from "@/lib/api/bookings"
-import { getAllUsers } from "@/lib/api/users"
+import { getAllEventsAdmin } from "@/lib/api/events"
+import { getDashboardStats } from "@/lib/api/dashboard"
 import type { Event } from "@/lib/types"
 
 export async function GET() {
   try {
     const { token } = await requireAdmin()
 
-    const [
-      totalEvents,
-      upcomingEvents,
-      totalBookings,
-      confirmedBookings,
-      totalRevenue,
-      allEvents,
-      users,
-    ] = await Promise.all([
-      getEventsCount(token),
-      getUpcomingEventsCount(token),
-      getBookingsCount(token),
-      getConfirmedBookingsCount(token),
-      getTotalRevenue(token),
+    const [dashboard, allEvents] = await Promise.all([
+      getDashboardStats(token),
       getAllEventsAdmin(token),
-      getAllUsers(token),
     ])
 
-    const now = new Date()
-    const recentEvents: Event[] = [...allEvents]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 8)
-
     const featuredEvents = allEvents.filter((e) => e.is_featured).length
-    const activeListings = allEvents.filter((e) => new Date(e.date) >= now).length
+    const pastEvents = Math.max(0, dashboard.events - dashboard.upcomingEvents)
+
+    // Recent = newest listings by created_at (matches “recently added” in admin).
+    const recentEvents: Event[] = [...allEvents]
+      .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+      .slice(0, 8)
 
     return NextResponse.json({
       stats: {
-        totalEvents,
-        upcomingEvents,
-        activeListings,
+        totalEvents: dashboard.events,
+        upcomingEvents: dashboard.upcomingEvents,
+        // Same definition as backend: event date >= today (calendar).
+        activeListings: dashboard.upcomingEvents,
+        pastEvents,
         featuredEvents,
-        totalBookings,
-        confirmedBookings,
-        totalRevenue,
-        totalUsers: users.length,
+        totalBookings: dashboard.totalBookings,
+        confirmedBookings: dashboard.confirmedBookings,
+        totalRevenue: dashboard.totalRevenue,
+        totalUsers: dashboard.users,
       },
       recentEvents,
     })

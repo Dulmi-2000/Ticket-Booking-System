@@ -24,22 +24,49 @@ export async function GET(
   }
 }
 
+async function handleEventUpdate(
+  request: NextRequest,
+  params: Promise<{ id: string }>
+) {
+  const session = await requireAdmin()
+  const { id } = await params
+  const data = await request.json()
+  const event = await updateEvent(id, data, session.token)
+
+  if (!event) {
+    return NextResponse.json({ error: "Event not found" }, { status: 404 })
+  }
+
+  return NextResponse.json({ event })
+}
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
-
-    const { id } = await params
-    const data = await request.json()
-    const event = await updateEvent(id, data)
-
-    if (!event) {
-      return NextResponse.json({ error: "Event not found" }, { status: 404 })
+    return await handleEventUpdate(request, context.params)
+  } catch (error) {
+    if ((error as Error).message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+    if ((error as Error).message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+    console.error("Error updating event:", error)
+    return NextResponse.json(
+      { error: "Failed to update event" },
+      { status: 500 }
+    )
+  }
+}
 
-    return NextResponse.json({ event })
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    return await handleEventUpdate(request, context.params)
   } catch (error) {
     if ((error as Error).message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -60,10 +87,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
-
+    const session = await requireAdmin()
     const { id } = await params
-    await deleteEvent(id)
+    await deleteEvent(id, session.token)
 
     return NextResponse.json({ success: true })
   } catch (error) {
