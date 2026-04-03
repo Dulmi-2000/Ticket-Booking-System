@@ -361,19 +361,8 @@ export function EventDetail({event}: EventDetailProps) {
     }
     setIsLoading(true);
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({eventId: event.id, quantity}),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to start checkout");
-      }
-      const {bookingId} = await res.json();
-      router.push(
-        `/booking/checkout?bookingId=${bookingId}&eventId=${event.id}&quantity=${quantity}`,
-      );
+      // Move to checkout page; booking is created only after payment confirmation.
+      router.push(`/booking/checkout?eventId=${event.id}&quantity=${quantity}`);
     } catch (error) {
       toast.error((error as Error).message);
     } finally {

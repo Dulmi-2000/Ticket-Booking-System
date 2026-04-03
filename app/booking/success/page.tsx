@@ -3,9 +3,10 @@
 import {useEffect, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
+import confetti from "canvas-confetti";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {CheckCircle, Calendar, Download, Ticket, Search} from "lucide-react";
+import {CheckCircle, Calendar, Ticket, Search} from "lucide-react";
 
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams();
@@ -68,7 +69,4 @@ export default function BookingSuccessPage() {
       </Card>
     </div>
   );
-}
-function confetti(arg0: {particleCount: number; spread: number; origin: {y: number}}) {
-  throw new Error("Function not implemented.");
 }

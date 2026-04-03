@@ -179,15 +179,38 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 function BookingSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3 animate-pulse">
-      <div className="flex gap-4">
-        <Skeleton className="h-44 w-44 rounded-lg shrink-0" />
-        <div className="flex-1 space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="h-4 w-1/3" />
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex flex-col sm:flex-row">
+        {/* Image placeholder */}
+        <Skeleton className="h-44 w-full shrink-0 sm:h-auto sm:w-44 rounded-none" />
+
+        {/* Content */}
+        <div className="flex flex-1 flex-col justify-between p-4 min-w-0">
+          {/* Top */}
+          <div>
+            {/* Title + status badge */}
+            <div className="mb-3 flex items-start justify-between gap-2">
+              <Skeleton className="h-5 w-2/3 rounded-lg" />
+              <Skeleton className="h-6 w-20 rounded-full shrink-0" />
+            </div>
+
+            {/* Meta pills */}
+            <div className="flex flex-wrap gap-2">
+              <Skeleton className="h-6 w-32 rounded-full" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-36 rounded-full" />
+            </div>
+          </div>
+
+          {/* Bottom row */}
+          <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-7 w-24 rounded-lg" />
+              <Skeleton className="h-4 w-20 rounded-md" />
+            </div>
+            <Skeleton className="h-8 w-20 rounded-xl" />
+          </div>
         </div>
-        <Skeleton className="h-8 w-20 rounded-full shrink-0" />
       </div>
     </div>
   );
@@ -238,7 +261,7 @@ export default function DashboardPage() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1 bg-muted/30">
-          <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="container mx-auto px-4 py-8 max-w-5xl">
             <Skeleton className="mb-2 h-9 w-52 rounded-xl" />
             <Skeleton className="mb-8 h-4 w-36 rounded-lg" />
             <div className="space-y-4">

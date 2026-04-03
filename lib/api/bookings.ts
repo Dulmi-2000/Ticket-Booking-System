@@ -173,6 +173,14 @@ export async function getRecentBookings(
   return data.bookings.map(mapBookingWithEvent)
 }
 
-export async function canCancelBooking(bookingId: string): Promise<boolean> {
-  return true
+export async function canCancelBooking(bookingId: string, token?: string): Promise<boolean> {
+  try {
+    const data = await backendGet<{ canCancel: boolean }>(
+      `/api/bookings/${bookingId}/can-cancel`,
+      token
+    )
+    return Boolean(data.canCancel)
+  } catch {
+    return false
+  }
 }

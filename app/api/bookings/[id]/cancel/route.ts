@@ -24,7 +24,7 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const canCancel = await canCancelBooking(id)
+    const canCancel = await canCancelBooking(id, session.token)
     if (!canCancel) {
       return NextResponse.json(
         {
