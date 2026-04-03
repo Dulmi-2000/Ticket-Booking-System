@@ -181,7 +181,7 @@ function BookingSkeleton() {
   return (
     <div className="rounded-xl border border-border bg-card p-4 space-y-3 animate-pulse">
       <div className="flex gap-4">
-        <Skeleton className="h-20 w-24 rounded-lg shrink-0" />
+        <Skeleton className="h-44 w-44 rounded-lg shrink-0" />
         <div className="flex-1 space-y-2">
           <Skeleton className="h-5 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
