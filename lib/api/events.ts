@@ -45,8 +45,12 @@ export async function getAllEvents(): Promise<Event[]> {
 }
 
 export async function getAllEventsAdmin(token?: string): Promise<Event[]> {
-  const data = await backendGet<{ events: BackendEvent[] }>("/api/events/admin", token)
-  return data.events.map(mapEvent)
+  const data = await backendGet<BackendEvent[] | { events: BackendEvent[] }>(
+    "/api/events/admin",
+    token
+  )
+  const list = Array.isArray(data) ? data : data.events
+  return list.map(mapEvent)
 }
 
 export async function getFeaturedEvents(): Promise<Event[]> {

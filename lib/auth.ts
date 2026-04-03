@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 import type { JWTPayload, AuthSession, UserRole } from "./types"
+import { normalizeUserRole } from "./roles"
 
 // Decode the Base64 secret to match the backend's encoding
 const JWT_SECRET = Uint8Array.from(
@@ -28,13 +29,13 @@ export async function createToken(
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET)
-    const jwtPayload = payload as any
+    const jwtPayload = payload as Record<string, unknown>
     return {
-      userId: String(jwtPayload.userId),
-      email: jwtPayload.email || jwtPayload.sub,
-      role: jwtPayload.role,
-      exp: jwtPayload.exp,
-      iat: jwtPayload.iat,
+      userId: String(jwtPayload.userId ?? ""),
+      email: (jwtPayload.email as string) || (jwtPayload.sub as string),
+      role: normalizeUserRole(jwtPayload.role),
+      exp: jwtPayload.exp as number | undefined,
+      iat: jwtPayload.iat as number | undefined,
     } as JWTPayload
   } catch {
     return null
@@ -71,7 +72,7 @@ export async function getSession(): Promise<AuthSession | null> {
       id: payload.userId,
       email: payload.email,
       name: payload.email.split("@")[0],
-      role: (payload.role?.toLowerCase() as UserRole) || "user",
+      role: normalizeUserRole(payload.role),
     },
     token,
   }
@@ -87,7 +88,7 @@ export async function requireAuth(): Promise<AuthSession> {
 
 export async function requireAdmin(): Promise<AuthSession> {
   const session = await requireAuth()
-  if (session.user.role !== "admin") {
+  if (normalizeUserRole(session.user.role) !== "admin") {
     throw new Error("Forbidden")
   }
   return session

@@ -13,10 +13,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { user, backendToken } = await loginUser(email, password)
+    const { user } = await loginUser(email, password)
 
-    // Prioritize the token from the backend
-    const token = backendToken || await createToken(user.id, user.email, user.role)
+    // Session cookie must be a Next JWT (userId, email, role). Backend tokens may omit
+    // those claims; using them would break /api/auth/session and middleware.
+    const token = await createToken(user.id, user.email, user.role)
     await setAuthCookie(token)
 
     return NextResponse.json({

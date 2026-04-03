@@ -171,6 +171,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Calendar, Ticket, Clock, XCircle, PartyPopper, Search, TrendingUp} from "lucide-react";
 import {useAuth} from "@/lib/auth-context";
+import {isAdminRole} from "@/lib/roles";
 import {motion, AnimatePresence} from "framer-motion";
 import type {BookingWithEvent} from "@/lib/types";
 import Link from "next/link";
@@ -253,6 +254,11 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!authLoading && !session) {
       router.push("/login?redirect=/dashboard");
+      return;
+    }
+
+    if (!authLoading && session && isAdminRole(session.user.role)) {
+      router.replace("/admin");
     }
   }, [session, authLoading, router]);
 

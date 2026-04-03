@@ -1,9 +1,10 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
 import {useAuth} from "@/lib/auth-context";
+import {isAdminRole} from "@/lib/roles";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -14,13 +15,20 @@ import {toast} from "sonner";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const {refresh} = useAuth();
+  const {refresh, session, isLoading: sessionLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const redirectTo = searchParams.get("redirect") || "/";
+
+  useEffect(() => {
+    if (sessionLoading || !session) return;
+    if (isAdminRole(session.user.role)) {
+      router.replace("/admin");
+    }
+  }, [session, sessionLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,11 +48,15 @@ export default function LoginPage() {
       }
 
       await refresh();
+      const sessionRes = await fetch("/api/auth/session");
+      const sessionData = await sessionRes.json();
+      if (!sessionData?.session) {
+        throw new Error("Login succeeded, but session could not be loaded. Please try again.");
+      }
+      const role = data?.user?.role || data?.role;
       toast.success("Welcome back!");
-
-      const user = data.user;
-      if (user.role === "admin") {
-        router.push("/admin");
+      if (isAdminRole(role)) {
+        router.replace("/admin");
       } else {
         router.push(redirectTo);
       }

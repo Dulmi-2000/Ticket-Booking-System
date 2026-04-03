@@ -113,9 +113,12 @@ import {Footer} from "@/components/footer";
 import {FeaturedEvents} from "@/components/featured-events";
 import {Trophy, Film, ArrowRight, CalendarDays, Users, Star} from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import HeroSection from "@/components/hero";
 import {GiMusicalNotes, GiPartyFlags} from "react-icons/gi";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import { getSession } from "@/lib/auth";
+import { isAdminRole } from "@/lib/roles";
 
 const categories = [
   {name: "Concerts", icon: GiMusicalNotes, color: "text-pink-500", bg: "bg-pink-500/10", count: 24},
@@ -136,7 +139,12 @@ const stats = [
   {icon: Star, value: "4.9", label: "Average rating"},
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getSession();
+  if (session && isAdminRole(session.user.role)) {
+    redirect("/admin");
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

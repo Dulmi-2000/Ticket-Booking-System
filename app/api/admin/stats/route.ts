@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth"
-import { getEventsCount, getUpcomingEventsCount } from "@/lib/api/events"
+import {
+  getEventsCount,
+  getUpcomingEventsCount,
+  getAllEventsAdmin,
+} from "@/lib/api/events"
 import {
   getBookingsCount,
   getConfirmedBookingsCount,
   getTotalRevenue,
-  getRecentBookings,
 } from "@/lib/api/bookings"
 import { getAllUsers } from "@/lib/api/users"
+import type { Event } from "@/lib/types"
 
 export async function GET() {
   try {
@@ -19,7 +23,7 @@ export async function GET() {
       totalBookings,
       confirmedBookings,
       totalRevenue,
-      recentBookings,
+      allEvents,
       users,
     ] = await Promise.all([
       getEventsCount(token),
@@ -27,20 +31,30 @@ export async function GET() {
       getBookingsCount(token),
       getConfirmedBookingsCount(token),
       getTotalRevenue(token),
-      getRecentBookings(10, token),
+      getAllEventsAdmin(token),
       getAllUsers(token),
     ])
+
+    const now = new Date()
+    const recentEvents: Event[] = [...allEvents]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 8)
+
+    const featuredEvents = allEvents.filter((e) => e.is_featured).length
+    const activeListings = allEvents.filter((e) => new Date(e.date) >= now).length
 
     return NextResponse.json({
       stats: {
         totalEvents,
         upcomingEvents,
+        activeListings,
+        featuredEvents,
         totalBookings,
         confirmedBookings,
         totalRevenue,
         totalUsers: users.length,
       },
-      recentBookings,
+      recentEvents,
     })
   } catch (error) {
     if ((error as Error).message === "Unauthorized") {

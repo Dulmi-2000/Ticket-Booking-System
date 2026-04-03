@@ -213,6 +213,7 @@ import {Ticket, User, LogOut, Calendar, Settings, Menu, X, ChevronDown} from "lu
 import {useState} from "react";
 import {useRouter, usePathname} from "next/navigation";
 import {motion, AnimatePresence} from "framer-motion";
+import {isAdminRole} from "@/lib/roles";
 
 const navLinks = [
   {label: "Concerts", href: "/events?category=Concerts"},
@@ -226,6 +227,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isAdmin = isAdminRole(session?.user?.role);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {method: "POST"});
@@ -304,12 +306,12 @@ export function Header() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="rounded-lg gap-2 cursor-pointer">
-                  <Link href="/dashboard">
+                  <Link href={isAdmin ? "/admin" : "/dashboard"}>
                     <Calendar className="h-4 w-4" />
-                    My Bookings
+                    {isAdmin ? "Admin Dashboard" : "My Bookings"}
                   </Link>
                 </DropdownMenuItem>
-                {session.user.role === "admin" && (
+                {isAdmin && (
                   <DropdownMenuItem asChild className="rounded-lg gap-2 cursor-pointer">
                     <Link href="/admin">
                       <Settings className="h-4 w-4" />
@@ -373,14 +375,14 @@ export function Header() {
 
               {session && (
                 <Link
-                  href="/dashboard"
+                  href={isAdmin ? "/admin" : "/dashboard"}
                   className="rounded-xl px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                   onClick={() => setMobileMenuOpen(false)}>
-                  My Bookings
+                  {isAdmin ? "Admin Dashboard" : "My Bookings"}
                 </Link>
               )}
 
-              {session?.user.role === "admin" && (
+              {isAdmin && (
                 <Link
                   href="/admin"
                   className="rounded-xl px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
