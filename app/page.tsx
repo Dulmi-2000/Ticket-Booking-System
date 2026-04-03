@@ -4,14 +4,14 @@ import {FeaturedEvents} from "@/components/featured-events";
 import {Music, Trophy, Film, Utensils} from "lucide-react";
 import Link from "next/link";
 import HeroSection from "@/components/hero";
-import {GiMusicalNotes} from "react-icons/gi";
+import {GiMusicalNotes, GiPartyFlags} from "react-icons/gi";
 import TestimonialsSection from "@/components/TestimonialsSection";
 
 const categories = [
   {name: "Concerts", icon: GiMusicalNotes, color: "text-pink-500"},
-  {name: "Theatre", icon: Film, color: "text-blue-500"},
+  {name: "Theatre", icon: Film, color: "text-yellow-500"},
   {name: "Sports", icon: Trophy, color: "text-orange-500"},
-  {name: "Food & Drink", icon: Utensils, color: "text-red-500"},
+  {name: "Family & Other", icon: GiPartyFlags, color: "text-red-500"},
 ];
 
 export default function HomePage() {

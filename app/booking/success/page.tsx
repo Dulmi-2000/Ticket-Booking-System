@@ -1,29 +1,28 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, Calendar, Download, Ticket } from "lucide-react"
-import confetti from "canvas-confetti"
+import {useEffect, useState} from "react";
+import {useSearchParams} from "next/navigation";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {CheckCircle, Calendar, Download, Ticket, Search} from "lucide-react";
 
 export default function BookingSuccessPage() {
-  const searchParams = useSearchParams()
-  const sessionId = searchParams.get("session_id")
-  const bookingId = searchParams.get("bookingId")
-  const [hasTriggeredConfetti, setHasTriggeredConfetti] = useState(false)
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const bookingId = searchParams.get("bookingId");
+  const [hasTriggeredConfetti, setHasTriggeredConfetti] = useState(false);
 
   useEffect(() => {
     if (!hasTriggeredConfetti && (sessionId || bookingId)) {
-      setHasTriggeredConfetti(true)
+      setHasTriggeredConfetti(true);
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 },
-      })
+        origin: {y: 0.6},
+      });
     }
-  }, [sessionId, bookingId, hasTriggeredConfetti])
+  }, [sessionId, bookingId, hasTriggeredConfetti]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4 py-8">
@@ -36,8 +35,8 @@ export default function BookingSuccessPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="text-muted-foreground">
-            Your tickets have been booked successfully. A confirmation email has
-            been sent to your registered email address.
+            Your tickets have been booked successfully. A confirmation email has been sent to your
+            registered email address.
           </p>
 
           <div className="rounded-lg bg-muted/50 p-4">
@@ -56,7 +55,7 @@ export default function BookingSuccessPage() {
             </Button>
             <Button variant="outline" asChild className="w-full gap-2">
               <Link href="/events">
-                <Download className="h-4 w-4" />
+                <Search className="h-4 w-4" />
                 Browse More Events
               </Link>
             </Button>
@@ -68,5 +67,8 @@ export default function BookingSuccessPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
+}
+function confetti(arg0: {particleCount: number; spread: number; origin: {y: number}}) {
+  throw new Error("Function not implemented.");
 }

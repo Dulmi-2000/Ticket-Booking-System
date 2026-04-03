@@ -3,7 +3,7 @@
 import {motion} from "framer-motion";
 import {CalendarDays, MapPin, ArrowRight} from "lucide-react";
 import {useRouter} from "next/navigation";
-import Image, { StaticImageData } from "next/image";
+import Image, {StaticImageData} from "next/image";
 import Link from "next/link";
 
 // Sample event images imported from /public/images
@@ -216,38 +216,57 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative container mx-auto px-6 pb-20">
         <motion.div
-          initial={{opacity: 0, y: 30}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.8, ease: "easeOut"}}
-          className="max-w-2xl rounded-2xl bg-background/10 p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-
-          <span className="relative inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-heading font-semibold tracking-wider uppercase mb-6 shadow-sm">
-            Welcome to BookMySeat
+          initial={{opacity: 0, y: 50, filter: "blur(8px)"}}
+          animate={{opacity: 1, y: 0, filter: "blur(0px)"}}
+          transition={{
+            duration: 1.2,
+            ease: [0.25, 0.46, 0.45, 0.94], // custom cubic bezier — smooth easeOut
+            opacity: {duration: 1.4},
+            filter: {duration: 1.0},
+          }}
+          className="max-w-2xl rounded-2xl p-10 relative overflow-hidden
+    bg-white/5 backdrop-blur-xl
+    border border-white/10
+    shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+          style={{
+            maskImage: "linear-gradient(to right, black 60%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, black 60%, transparent 100%)",
+          }}>
+          <span
+            className="relative inline-block px-4 py-1.5 rounded-full
+    bg-primary/20 border border-primary/40
+    text-primary text-xs font-heading font-semibold tracking-wider uppercase mb-6">
+            <motion.span
+              initial={{opacity: 0, y: 10}}
+              animate={{opacity: 1, y: 0}}
+              transition={{delay: 0.4, duration: 0.8, ease: "easeOut"}}>
+              Welcome to BookMySeat
+            </motion.span>
           </span>
 
-          <h1 className="relative font-heading text-5xl md:text-7xl font-bold text-white leading-[0.95] mb-5">
+          <motion.h1
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.6, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94]}}
+            className="relative font-heading text-5xl md:text-7xl font-bold text-white leading-[0.95] mb-5">
+            Let's Book Your Event
+          </motion.h1>
+
+          <motion.p
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.8, duration: 0.9, ease: "easeOut"}}
+            className="relative text-white/60 text-lg mb-8 max-w-lg leading-relaxed">
+            Book live events and discover concerts, sports, theater and more across Sri Lanka.
+          </motion.p>
+
+          {/* <h1 className="relative font-heading text-5xl md:text-7xl font-bold text-white leading-[0.95] mb-5">
             Let’s Book Your Event
           </h1>
 
           <p className="relative text-white/60 text-lg mb-8 max-w-lg leading-relaxed">
             Book live events and discover concerts, sports, theater and more across Sri Lanka.
-          </p>
-
-          <div className="relative flex flex-wrap gap-3 mt-8">
-            <Link href="/events?category=Concerts" className="px-5 py-2.5 rounded-full border border-border bg-background/50 backdrop-blur-md text-sm font-semibold hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:border-primary transition-all shadow-sm">
-              Concerts
-            </Link>
-            <Link href="/events?category=Sports" className="px-5 py-2.5 rounded-full border border-border bg-background/50 backdrop-blur-md text-sm font-semibold hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:border-primary transition-all shadow-sm">
-              Sports
-            </Link>
-            <Link href="/events?category=Movies" className="px-5 py-2.5 rounded-full border border-border bg-background/50 backdrop-blur-md text-sm font-semibold hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:border-primary transition-all shadow-sm">
-              Movies
-            </Link>
-            <Link href="/events?category=Drama" className="px-5 py-2.5 rounded-full border border-border bg-background/50 backdrop-blur-md text-sm font-semibold hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:border-primary transition-all shadow-sm">
-              Drama
-            </Link>
-          </div>
+          </p> */}
         </motion.div>
       </div>
     </section>
