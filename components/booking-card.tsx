@@ -180,7 +180,7 @@
 
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {Card, CardContent} from "@/components/ui/card";
@@ -211,9 +211,26 @@ export function BookingCard({booking, onCancel}: BookingCardProps) {
 
   const event = booking.event;
   const isPast = new Date(event.date) < new Date();
-  const hoursUntilEvent =
-    (new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60);
-  const canCancel = booking.status === "confirmed" && !isPast && hoursUntilEvent >= 24;
+  const [canCancel, setCanCancel] = useState(false);
+
+  useEffect(() => {
+    if (booking.status !== "confirmed" || isPast) {
+      setCanCancel(false);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/bookings/${booking.id}/can-cancel`)
+      .then(res => res.json())
+      .then(data => {
+        if (!cancelled) setCanCancel(Boolean(data.canCancel));
+      })
+      .catch(() => {
+        if (!cancelled) setCanCancel(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [booking.id, booking.status, isPast]);
 
   const formattedDate = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "short",

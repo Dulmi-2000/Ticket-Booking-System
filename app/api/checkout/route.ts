@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
 import { requireAuth } from "@/lib/auth"
 import { getEventById } from "@/lib/api/events"
 import { createBooking } from "@/lib/api/bookings"

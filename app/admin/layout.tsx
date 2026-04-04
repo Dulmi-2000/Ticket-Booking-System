@@ -8,7 +8,14 @@ import {useAuth} from "@/lib/auth-context";
 import {isAdminRole} from "@/lib/roles";
 import {Button} from "@/components/ui/button";
 import {Skeleton} from "@/components/ui/skeleton";
-import {LayoutDashboard, Calendar, Ticket, ArrowLeft, Settings} from "lucide-react";
+import {
+  LayoutDashboard,
+  Calendar,
+  Ticket,
+  ArrowLeft,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 const navItems = [
   {href: "/admin", label: "Overview", icon: LayoutDashboard},
@@ -19,8 +26,14 @@ const navItems = [
 export default function AdminLayout({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const pathname = usePathname();
-  const {session, isLoading} = useAuth();
+  const {session, isLoading, refresh} = useAuth();
   const isAdmin = isAdminRole(session?.user?.role);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", {method: "POST"});
+    await refresh();
+    router.push("/login");
+  };
 
   useEffect(() => {
     if (!isLoading && (!session || !isAdmin)) {
@@ -115,15 +128,25 @@ export default function AdminLayout({children}: {children: React.ReactNode}) {
                 <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              asChild
-              className="w-full justify-start gap-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted">
-              <Link href="/">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Site
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-1">
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full justify-start gap-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted">
+                <Link href="/">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Site
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-start gap-2 rounded-xl border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => void handleLogout()}>
+                <LogOut className="h-4 w-4" />
+                Log out
+              </Button>
+            </div>
           </div>
         </div>
       </aside>
@@ -153,9 +176,17 @@ export default function AdminLayout({children}: {children: React.ReactNode}) {
           })}
           <Link
             href="/"
-            className="rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors">
+            className="rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors"
+            aria-label="Back to site">
             <ArrowLeft className="h-5 w-5" />
           </Link>
+          <button
+            type="button"
+            onClick={() => void handleLogout()}
+            className="rounded-xl p-2 text-destructive hover:bg-destructive/10 transition-colors"
+            aria-label="Log out">
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </div>
 

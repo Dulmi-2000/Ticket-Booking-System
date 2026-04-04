@@ -37,7 +37,7 @@ export const pool =
 if (process.env.NODE_ENV !== "production") globalForDb.pool = pool
 
 export async function query<T>(sql: string, params?: unknown[]): Promise<T[]> {
-  const [rows] = await pool.execute(sql, params)
+  const [rows] = await pool.execute(sql, params as any)
   return rows as T[]
 }
 
@@ -53,6 +53,6 @@ export async function execute(
   sql: string,
   params?: unknown[]
 ): Promise<mysql.ResultSetHeader> {
-  const [result] = await pool.execute(sql, params)
+  const [result] = await pool.execute(sql, params as any)
   return result as mysql.ResultSetHeader
 }

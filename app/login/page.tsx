@@ -25,10 +25,15 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (sessionLoading || !session) return;
+    const next = searchParams.get("redirect");
+    if (next && next.startsWith("/")) {
+      router.replace(next);
+      return;
+    }
     if (isAdminRole(session.user.role)) {
       router.replace("/admin");
     }
-  }, [session, sessionLoading, router]);
+  }, [session, sessionLoading, router, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,12 +58,17 @@ export default function LoginPage() {
       if (!sessionData?.session) {
         throw new Error("Login succeeded, but session could not be loaded. Please try again.");
       }
-      const role = data?.user?.role || data?.role;
       toast.success("Welcome back!");
+      const next = searchParams.get("redirect");
+      if (next && next.startsWith("/")) {
+        router.replace(next);
+        return;
+      }
+      const role = data?.user?.role || data?.role;
       if (isAdminRole(role)) {
         router.replace("/admin");
       } else {
-        router.push(redirectTo);
+        router.replace(redirectTo);
       }
     } catch (error) {
       toast.error((error as Error).message);

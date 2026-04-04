@@ -5,7 +5,7 @@ import {
   updateBookingStatus,
 } from "@/lib/api/bookings"
 import { requireAuth } from "@/lib/auth"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 
 export async function POST(
   request: NextRequest,
@@ -38,7 +38,7 @@ export async function POST(
     // Process refund if payment was made
     if (booking.stripe_payment_intent_id) {
       try {
-        await stripe.refunds.create({
+        await getStripe().refunds.create({
           payment_intent: booking.stripe_payment_intent_id,
         })
       } catch (refundError) {

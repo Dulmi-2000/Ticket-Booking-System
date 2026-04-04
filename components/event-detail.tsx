@@ -413,7 +413,9 @@ export function EventDetail({event}: EventDetailProps) {
             {event.category}
           </Badge>
           {event.is_featured && (
-            <Badge className="bg-primary text-primary-foreground">Featured</Badge>
+            <Badge className="inline-flex items-center gap-2 rounded-full bg-primary backdrop-blur-md px-5 py-1.5 text-white text-md font-medium transition-all">
+              Featured
+            </Badge>
           )}
         </div>
       </div>

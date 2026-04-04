@@ -182,7 +182,7 @@
 "use client";
 
 import {useSearchParams, useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {Checkout} from "@/components/checkout";
@@ -211,23 +211,46 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const eventId = searchParams.get("eventId");
-  const quantity = parseInt(searchParams.get("quantity") || "1", 10);
+  const quantity = useMemo(() => {
+    const n = parseInt(searchParams.get("quantity") || "1", 10);
+    if (Number.isNaN(n) || n < 1) return 1;
+    return Math.min(n, 100);
+  }, [searchParams]);
 
   useEffect(() => {
-    if (!authLoading && !session) {
-      router.push(`/login?redirect=/events/${eventId}`);
+    if (authLoading) return;
+
+    if (!session) {
+      const params = new URLSearchParams();
+      if (eventId) params.set("eventId", eventId);
+      params.set("quantity", String(quantity));
+      const dest = `/booking/checkout?${params.toString()}`;
+      router.push(`/login?redirect=${encodeURIComponent(dest)}`);
       return;
     }
-    if (eventId) {
-      fetch(`/api/events/${eventId}`)
-        .then(res => res.json())
-        .then(data => {
-          setEvent(data.event);
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
+
+    if (!eventId) {
+      setEvent(null);
+      setIsLoading(false);
+      return;
     }
-  }, [eventId, session, authLoading, router]);
+
+    setIsLoading(true);
+    fetch(`/api/events/${eventId}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Not found");
+        return res.json();
+      })
+      .then(data => {
+        setEvent(data.event ?? null);
+      })
+      .catch(() => {
+        setEvent(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [eventId, quantity, session, authLoading, router]);
 
   if (authLoading || isLoading) {
     return (
